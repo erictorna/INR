@@ -10,5 +10,6 @@ inr = merge(ids, DX_CI_BANYOLES)[,ids:=NULL][,PR_COD_U:=NULL]
 inr = inr %>% rename(cod_ci = PR_COD_PS)
 inr = inr %>% rename(dat_ci = PR_DDE)
 inr$USUA_UAB_UP <- NULL
+inr = inr[,c(1,4,5,6,2,3)]
 
 save(inr, file = '~/idiap/projects/INR/build.data/CI.RData')
