@@ -10,5 +10,6 @@ inr = merge(ids, DX_DM2_BANYOLES)[,ids:=NULL][,PR_COD_U:=NULL]
 inr = inr %>% rename(cod_diab = PR_COD_PS)
 inr = inr %>% rename(dat_diab = PR_DDE)
 inr$USUA_UAB_UP <- NULL
+inr$cod_diab<-NULL
 
 save(inr, file = '~/idiap/projects/INR/build.data/diabetes.RData')

@@ -10,5 +10,6 @@ inr = merge(ids, DX_OB_BANYOLES)[,ids:=NULL][,PR_COD_U:=NULL]
 inr = inr %>% rename(cod_prot_valv = PR_COD_PS)
 inr = inr %>% rename(dat_prot_valv = PR_DDE)
 inr$USUA_UAB_UP <- NULL
+inr$cod_prot_valv<-NULL
 
 save(inr, file = '~/idiap/projects/INR/build.data/protesi_valvular.RData')

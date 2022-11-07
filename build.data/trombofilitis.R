@@ -10,5 +10,6 @@ inr = merge(ids, DX_OB_BANYOLES)[,ids:=NULL][,PR_COD_U:=NULL]
 inr = inr %>% rename(cod_trombo = PR_COD_PS)
 inr = inr %>% rename(dat_trombo = PR_DDE)
 inr$USUA_UAB_UP <- NULL
+inr$cod_trombo<-NULL
 
 save(inr, file = '~/idiap/projects/INR/build.data/trombofilitis.RData')

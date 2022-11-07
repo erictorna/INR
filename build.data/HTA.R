@@ -10,5 +10,6 @@ inr = merge(ids, DX_HTA_BANYOLES)[,ids:=NULL][,PR_COD_U:=NULL]
 inr = inr %>% rename(cod_hta = PR_COD_PS)
 inr = inr %>% rename(dat_hta = PR_DDE)
 inr$USUA_UAB_UP <- NULL
+inr$cod_hta<-NULL
 
 save(inr, file = '~/idiap/projects/INR/build.data/HTA.RData')

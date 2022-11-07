@@ -14,27 +14,37 @@ ids$ids<-NULL
 cohort.base = ids
 setDT(cohort.base)
 
-# Aqui he de preguntar amb quina data es vol quedar en els casos en que el mateix id surt multiples vegades
-# Quina és la dmin i la dmax?
-# Filtrar per edat?
+# Comorbiditats
 
 for(f_nm in f_nms){
 # CI, diabetes, estenosi mitral, FA, HTA, ictus, MRC, obesitat morbida, obesitat, protesi valvular, sobrepes, TEP, trombofilitis, valvulopatia arotica
   print(f_nm)
   load(paste0(paste0('~/idiap/projects/INR/build.data/','/', f_nm)))
   setDT(inr)
-  # inr = inr[inr[[3]]>ymd('2000-01-01')]
+  inr = inr %>%
+    group_by(id) %>%
+    arrange(inr[,2]) %>%
+    slice(1L)
+  setDT(inr)
+  # Fem fora gent que hagi patit comorbiditats posteriors a la data de finalitzacio de l'estudi
+  inr = inr[inr[[2]]<ymd('2021-07-01')]
   cohort.base = full_join(cohort.base, inr)
 }
 cohort.base = cohort.base[!is.na(USUA_SEXE)]
 cohort.base = cohort.base[!duplicated(cohort.base), ]
 
-# Vacunes
+# Vacunes, tenim en compte nomes la primera dosi sempre i quant aquesta no shagi produit més tard del juliol del 2021
 
 load('~/idiap/projects/INR/build.data/vacunes.RData')
-
+vacunes = vacunes %>%
+  group_by(id) %>%
+  arrange(data_vacuna) %>%
+  slice(1L)
+setDT(vacunes)
+# Fem fora gent que shagi vacunat per primera vegada fora de la data de final d'estudi
+vacunes = vacunes[vacunes[[4]]<ymd('2021-07-01')]
 cohort.base = full_join(cohort.base, vacunes)
-nrow(cohort.base[is.na(VA_U_DOSI), .N, keyby=.(id)]) # 1673 de 9329 id que no tenen vacuna (~18%)
+nrow(cohort.base[is.na(VA_U_DOSI), .N, keyby=.(id)]) 
 
 # Temps en rang terapeutic
 
@@ -49,9 +59,17 @@ nrow(cohort.base[val_trt_12M==-1.00, .N, keyby=.(id)]) # 125
 # Tractament warfarina (B01AA03) i Sintrom (B01AA07)
 
 load('~/idiap/projects/INR/build.data/TTO.RData')
+tto = tto %>% mutate(duration_tto = dat_fi_tto - dat_ini_tto) %>% select(id, cod_tto, dat_ini_tto, dat_fi_tto, duration_tto, USUA_SEXE, DATA_NAIX, EDAT)
 cohort.base = full_join(cohort.base, tto)
 
 # INR, preguntar perquè hi ha dos arxius diferents
 
 load('~/idiap/projects/INR/build.data/var_inr.RData')
-load('~/idiap/projects/INR/build.data/var_inr2.RData')
+# load('~/idiap/projects/INR/build.data/var_inr2.RData')
+
+
+# Exclusions
+cohort.base = cohort.base[!(is.na(cohort.base$VA_U_COD))] # Eliminem els no vacunats
+cohort.base = cohort.base[!(is.na(cod_tto))] # Ens quedem només amb els que tenen tractament amb warfarina o sintrom
+cohort.base = cohort.base[EDAT>18] # Treiem els menors de 18 anys
+

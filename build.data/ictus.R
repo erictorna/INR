@@ -10,5 +10,6 @@ inr = merge(ids, DX_ICTUS_BANYOLES)[,ids:=NULL][,PR_COD_U:=NULL]
 inr = inr %>% rename(cod_ictus = PR_COD_PS)
 inr = inr %>% rename(dat_ictus = PR_DDE)
 inr$USUA_UAB_UP <- NULL
+inr$cod_ictus<-NULL
 
 save(inr, file = '~/idiap/projects/INR/build.data/ictus.RData')

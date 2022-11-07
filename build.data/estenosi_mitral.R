@@ -10,5 +10,6 @@ inr = merge(ids, DX_ESTENOSI_MITRAL_BANYOLES)[,ids:=NULL][,PR_COD_U:=NULL]
 inr = inr %>% rename(cod_estenosi = PR_COD_PS)
 inr = inr %>% rename(dat_estenosi = PR_DDE)
 inr$USUA_UAB_UP <- NULL
+inr$cod_estenosi<-NULL
 
 save(inr, file = '~/idiap/projects/INR/build.data/estenosi_mitral.RData')
